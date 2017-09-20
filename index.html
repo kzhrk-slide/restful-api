@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RESTful API</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif', 'YuGothic', 'Arial', serif; }
+      h1, h2, h3, h4 {
+        font-weight: normal;
+        color: #c18100;
+        line-height: 1;
+      }
+      a,
+      a:link,
+      a:visited {
+        color: #825700;
+      }
+      li {
+        margin-top: 5px;
+      }
+      li:first-child {
+        margin-top: 0;
+      }
+      ul ul {
+        margin-top: 5px;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .big {
+        font-size: 150px;
+      }
+      code.text {
+        white-space: normal;
+      }
+      pre {
+        padding: 1em;
+        background-color: #eee;
+      }
+      table {
+        width: 100%;
+      }
+      th {
+        padding: 0.5em;
+        background-color: #ffdbb6;
+      }
+      td {
+        padding: 0.5em;
+        background-color: #fff7e7;
+      }
+      tr {
+        background-color: #eee;
+      }
+      .w100 img {
+        width: 100%;
+      }
+      .del {
+        text-decoration: line-through;
+      }
+      .remark-slide-scaler {
+        overflow: scroll;
+      }
+      .remark-slide-number {
+
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+
+      class: center, middle
+
+      # RESTful API
+
+      2017/09/20
+
+      Kobayashi Kazuhiro (kzhrk)
+
+
+      ---
+
+      ## Agenda
+
+      - RESTful APIとは
+      - HTTP Method
+      - URI設計
+      - 3分で作るRESTful API
+
+      ---
+      class: center, middle
+
+      # RESTful APIとは
+
+      ---
+
+      ## 'REST'ful API
+
+      'Representational State Transfer'-ful API
+
+      -fulはSuffix（Powerfulなどと同じ活用）
+
+      ---
+
+      ## RESTful APIとは
+
+      Webに代表されるネットワーク・ベースの分散アプリケーション設計のための「アーキテクチャ・スタイル」
+
+      Architectural Styles and the Design of Network-based Software Architectures
+      http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm
+
+      ---
+
+      ## REST vs RPC
+
+      ### RPCとは
+
+      Remote Procedure Call
+
+      遠隔手続呼出。遠隔相互作用の詳細を明示的にコーディングする必要がない。
+
+      .center[↓]
+
+      - HTTPメソッドはすべてPOST
+      - URIは階層を持たない。
+
+      Slack APIがRPCで設計されたAPIに該当する。
+
+      https://api.slack.com/web
+
+      ---
+
+      ## REST
+
+      <!--https://www.ibm.com/developerworks/jp/webservices/library/ws-restful/index.html-->
+
+      - 明示的にHTTPメソッドを使う
+      - ステートレスにする（サーバ側で状態管理をしない）
+      - ディレクトリ構造に似たURIを公開する
+      - XML、JSON (JavaScript Object Notation) のいずれか、またはその両方を返却する
+
+      ---
+      class: center, middle
+
+      # HTTP Method
+
+      ---
+
+      ## HTTP Method
+
+      HTTPメソッドは実行内容を示す。
+
+      <!--http://www.restapitutorial.com/lessons/httpmethods.html-->
+
+      | methods | description | status |
+      |:--------|:------------|:------------|
+      | POST | リソースの新規作成 | 201(Created)<br>404(Not Found)<br>409(Conflict) |
+      | GET | リソースの取得 | 200(OK)<br>404(Not Found) |
+      | PUT | リソースの置換更新 | 200(OK)<br>204(No Content)<br>404(Not Found)<br>405(Not Allowed) |
+      | PATCH | リソースの部分更新 | 200(OK)<br>204(No Content)<br>404(Not Found)<br>405(Not Allowed) |
+      | DELETE| リソースの削除 | 200(OK)<br>405(Not Allowed) |
+
+      ---
+      class: center, middle
+
+      # URI設計
+
+      ---
+
+      ## URI設計
+
+      URIはリソースのターゲットを示す。
+
+      | URI | description |
+      |:----|:------------|
+      | /users/{userId} | 特定ユーザ |
+      | /works | 作品一覧 |
+      | /works/{urlId} | 作品詳細 |
+      | /users/{userId}/works | 特定ユーザの作品一覧 |
+
+      ---
+
+      ## 公開されているRESTful API
+
+      | Service | URL |
+      |:--------|:----|
+      | Twitter | https://dev.twitter.com/rest/reference |
+      | Instagram | https://www.instagram.com/developer/endpoints/ |
+      | Pinterest | https://developers.pinterest.com/docs/api/overview/ |
+
+      ---
+      class: center, middle
+
+      # PUT or PATCH
+
+      置換更新か部分更新か
+
+      ---
+
+      ## 記事の編集をロックする
+
+      ** PATCH **
+
+      個別記事のURIにlockパラメータをsendする
+
+      | URI | METHOD | PARAM |
+      |:----|:-------|:------|
+      | /articles/12345 | PATCH | lock: true |
+
+      ** PUT **
+
+      個別記事のURIにlockプロパティを追加する
+
+      | URI | METHOD | PARAM |
+      |:----|:-------|:------|
+      | /articles/12345/lock | PUT | null |
+
+      ---
+
+      ## 記事の編集をロックする
+
+      /articles/12345/lockがあれば、GETリクエストでlock状態も取得できる。
+
+      DELETEリクエストでlockを解除できる。美しい。最高。
+
+      | URI | METHOD | RETURN |
+      |:----|:-------|:------|
+      | /articles/12345/lock | GET | {lock: true} |
+      | /articles/12345/lock | DELETE | null |
+
+      ---
+      class: center, middle
+
+      # 美しいURI設計とは
+
+      ---
+
+      ## 個別ユーザが投稿した記事を取得する
+
+      ** PARAMを使う **
+
+      GET /worksにuserIdのパラメータをsendする
+
+      | URI | METHOD | PARAM |
+      |:----|:-------|:------|
+      | /works | GET | userId: 12345 |
+
+      ** URIで完結させる **
+
+      GET /users/{userId}/worksにリクエストを投げる
+
+      | URI | METHOD | PARAM |
+      |:----|:-------|:------|
+      | /users/{userId}/works | GET | null |
+
+      ---
+      class: center, middle
+
+      # 3分でつくるRESTful API
+
+      ---
+
+      ## レシピ
+
+      - Docker(mongoDB)
+      - mongoose(Object Document Mapper)
+      - express.js(http server)
+
+      ---
+
+      ## 手順
+
+      1. dockerのmongo imageを取得
+      2. mongo imageからsample container作成
+      3. express, body-parser, mongooseをinstall
+      4. expressとmongooseの設定
+      5. Modelの作成
+      6. Routerの作成
+
+      3~6. https://github.com/kzhrk-sandbox/sample-restful-api
+
+      ---
+
+      ## 文献
+      
+      - https://www.ibm.com/developerworks/jp/webservices/library/ws-restful/index.html
+      - https://github.com/WhiteHouse/api-standards
+      - http://www.restapitutorial.com/
+
+      ---
+      class: center, middle
+
+      # END
+
+
+    </textarea>
+    <script src="js/remark.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        navigation: {
+          scroll: false
+        }
+      });
+    </script>
+  </body>
+</html>
